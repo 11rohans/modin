@@ -366,7 +366,7 @@ class PandasDataManager(object):
         return self._inter_df_op_handler(func, other, **kwargs)
     
     def rdiv(self, other, **kwargs):
-        func = pandas.DataFame.rdiv
+        func = pandas.DataFrame.rdiv
         return self._inter_df_op_handler(func, other, **kwargs)
 
     def eq(self, other, **kwargs):
