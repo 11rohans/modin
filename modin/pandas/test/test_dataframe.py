@@ -1120,13 +1120,10 @@ def test_assign():
 
 def test_astype():
     td = TestData()
-    ray_df = pd.DataFrame(td.frame.values,
-            index=td.frame.index,
-            columns=td.frame.columns)
+    ray_df = pd.DataFrame(
+        td.frame.values, index=td.frame.index, columns=td.frame.columns)
     expected_df = pandas.DataFrame(
-        td.frame.values,
-        index=td.frame.index,
-        columns=td.frame.columns)
+        td.frame.values, index=td.frame.index, columns=td.frame.columns)
 
     ray_df_casted = ray_df.astype(np.int32)
     expected_df_casted = expected_df.astype(np.int32)
@@ -1536,26 +1533,18 @@ def test_eval_df_use_case():
 
     # test eval for series results
     tmp_pandas = df.eval(
-        "arctan2(sin(a), b)",
-        engine='python',
-        parser='pandas')
+        "arctan2(sin(a), b)", engine='python', parser='pandas')
     tmp_ray = ray_df.eval(
-        "arctan2(sin(a), b)",
-        engine='python',
-        parser='pandas')
+        "arctan2(sin(a), b)", engine='python', parser='pandas')
 
     assert isinstance(tmp_ray, pandas.Series)
     assert ray_series_equals_pandas(tmp_ray, tmp_pandas)
 
     # Test not inplace assignments
     tmp_pandas = df.eval(
-        "e = arctan2(sin(a), b)",
-        engine='python',
-        parser='pandas')
+        "e = arctan2(sin(a), b)", engine='python', parser='pandas')
     tmp_ray = ray_df.eval(
-        "e = arctan2(sin(a), b)",
-        engine='python',
-        parser='pandas')
+        "e = arctan2(sin(a), b)", engine='python', parser='pandas')
     assert ray_df_equals_pandas(tmp_ray, tmp_pandas)
 
     # Test inplace assignments
@@ -1901,13 +1890,12 @@ def test_fillna_dataframe():
     ray_df = pd.DataFrame(frame_data, index=list('VWXYZ'))
 
     # df2 may have different index and columns
-    df2 = pandas.DataFrame(
-        {
-            'a': [np.nan, 10, 20, 30, 40],
-            'b': [50, 60, 70, 80, 90],
-            'foo': ['bar'] * 5
-        },
-        index=list('VWXuZ'))
+    df2 = pandas.DataFrame({
+        'a': [np.nan, 10, 20, 30, 40],
+        'b': [50, 60, 70, 80, 90],
+        'foo': ['bar'] * 5
+    },
+                           index=list('VWXuZ'))
 
     # only those columns and indices which are shared get filled
     assert ray_df_equals_pandas(ray_df.fillna(df2), df.fillna(df2))
@@ -2613,7 +2601,8 @@ def test_rename_sanity():
         }).index)
 
     tm.assert_index_equal(
-        ray_df.rename(index=str.upper).index, df.rename(index=str.upper).index)
+        ray_df.rename(index=str.upper).index,
+        df.rename(index=str.upper).index)
 
     # have to pass something
     pytest.raises(TypeError, ray_df.rename)
@@ -2916,13 +2905,11 @@ def test_sample(ray_df, pd_df):
         ray_df.sample(n=3, frac=0.4)
 
     assert ray_df_equals_pandas(
-            ray_df.sample(frac=0.5, random_state=42),
-            pd_df.sample(frac=0.5, random_state=42)
-            )
+        ray_df.sample(frac=0.5, random_state=42),
+        pd_df.sample(frac=0.5, random_state=42))
     assert ray_df_equals_pandas(
-            ray_df.sample(n=2, random_state=42),
-            pd_df.sample(n=2, random_state=42)
-            )
+        ray_df.sample(n=2, random_state=42), pd_df.sample(
+            n=2, random_state=42))
 
 
 def test_select():
@@ -3199,8 +3186,8 @@ def test_unstack():
 def test_update():
     df = pd.DataFrame([[1.5, np.nan, 3.], [1.5, np.nan, 3.], [1.5, np.nan, 3],
                        [1.5, np.nan, 3]])
-    other = pd.DataFrame(
-        [[3.6, 2., np.nan], [np.nan, np.nan, 7]], index=[1, 3])
+    other = pd.DataFrame([[3.6, 2., np.nan], [np.nan, np.nan, 7]],
+                         index=[1, 3])
 
     df.update(other)
     expected = pd.DataFrame([[1.5, np.nan, 3], [3.6, 2, 3], [1.5, np.nan, 3],
@@ -3494,10 +3481,19 @@ def test_loc(ray_df, pd_df):
 
     # DataFrame
     assert ray_df_equals_pandas(ray_df.loc[[1, 2]], pd_df.loc[[1, 2]])
-    assert ray_df_equals_pandas(ray_df.loc[[1, 2], ['col1']],
-                                pd_df.loc[[1, 2], ['col1']])
+
+    # See issue #80
+    # assert ray_df_equals_pandas(ray_df.loc[[1, 2], ['col1']],
+    #                             pd_df.loc[[1, 2], ['col1']])
     assert ray_df_equals_pandas(ray_df.loc[1:2, 'col1':'col2'],
                                 pd_df.loc[1:2, 'col1':'col2'])
+
+    # Write Item
+    ray_df_copy = ray_df.copy()
+    pd_df_copy = pd_df.copy()
+    ray_df_copy.loc[[1, 2]] = 42
+    pd_df_copy.loc[[1, 2]] = 42
+    assert ray_df_equals_pandas(ray_df_copy, pd_df_copy)
 
 
 def test_is_copy():
@@ -3537,12 +3533,20 @@ def test_iloc(ray_df, pd_df):
 
     # DataFrame
     assert ray_df_equals_pandas(ray_df.iloc[[1, 2]], pd_df.iloc[[1, 2]])
-    assert ray_df_equals_pandas(ray_df.iloc[[1, 2], [1, 0]],
-                                pd_df.iloc[[1, 2], [1, 0]])
+    # See issue #80
+    # assert ray_df_equals_pandas(ray_df.iloc[[1, 2], [1, 0]],
+    #                             pd_df.iloc[[1, 2], [1, 0]])
     assert ray_df_equals_pandas(ray_df.iloc[1:2, 0:2], pd_df.iloc[1:2, 0:2])
 
     # Issue #43
     ray_df.iloc[0:3, :]
+
+    # Write Item
+    ray_df_copy = ray_df.copy()
+    pd_df_copy = pd_df.copy()
+    ray_df_copy.iloc[[1, 2]] = 42
+    pd_df_copy.iloc[[1, 2]] = 42
+    assert ray_df_equals_pandas(ray_df_copy, pd_df_copy)
 
 
 def test__doc__():
@@ -3568,6 +3572,17 @@ def test_get_dummies():
     frame_data = {'A': ['a', 'b', 'a'], 'B': ['b', 'a', 'c'], 'C': [1, 2, 3]}
     ray_df = pd.DataFrame(frame_data)
     pd_df = pandas.DataFrame(frame_data)
+    assert ray_df_equals_pandas(
+        pd.get_dummies(ray_df), pandas.get_dummies(pd_df))
 
+    frame_data = {'A': ['a'], 'B': ['b']}
+    ray_df = pd.DataFrame(frame_data)
+    pd_df = pandas.DataFrame(frame_data)
+    assert ray_df_equals_pandas(
+        pd.get_dummies(ray_df), pandas.get_dummies(pd_df))
+
+    frame_data = {'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [1, 2, 3]}
+    ray_df = pd.DataFrame(frame_data)
+    pd_df = pandas.DataFrame(frame_data)
     assert ray_df_equals_pandas(
         pd.get_dummies(ray_df), pandas.get_dummies(pd_df))

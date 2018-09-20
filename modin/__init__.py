@@ -38,7 +38,7 @@ def get_partition_format():
 
 
 __git_revision__ = git_version()
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __execution_engine__ = get_execution_engine()
 __partition_format__ = get_partition_format()
 
