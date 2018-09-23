@@ -153,7 +153,7 @@ class PandasDataManager(object):
 
     def numeric_function_clean_dataframe(self, axis):
         """Preprocesses numeric functions to clean dataframe and pick numeric indices.
-        
+
         Args:
             axis: '0' if columns and '1' if rows.
 
@@ -1042,9 +1042,9 @@ class PandasDataManager(object):
     def full_axis_reduce(self, func, axis):
         """Applies map that reduce Manager to series but require knowledge of full axis.
 
-        Args: 
+        Args:
             func: Function to reduce the Manager by. This function takes in a Manager.
-        
+
         Return:
             Pandas series containing the reduced data.
         """
@@ -1063,7 +1063,7 @@ class PandasDataManager(object):
         Args:
             axis: 0 for columns and 1 for rows. Defaults to 0.
 
-        Return: 
+        Return:
             Pandas Series containing boolean values.
         """
         axis = kwargs.get("axis", 0)
@@ -1075,7 +1075,7 @@ class PandasDataManager(object):
 
         Args:
             axis: 0 for columns and 1 for rows. Defaults to 0.
-            
+
         Return:
             Pandas Series containing boolean values.
         """
@@ -1222,7 +1222,7 @@ class PandasDataManager(object):
             axis: 0 for columns and 1 for rows. Defaults to 0.
             index: Index of the resulting series.
             pandas_result: Return the result as a Pandas Series instead of raw data.
-            
+
         Returns:
             Either a Pandas Series with index or BlockPartitions object.
         """
@@ -1248,7 +1248,7 @@ class PandasDataManager(object):
         """
         axis = 0
 
-        # Only describe numeric if there are numeric 
+        # Only describe numeric if there are numeric
         # Otherwise, describe all
         new_index = self.numeric_columns()
         if len(new_index) != 0:
@@ -1602,7 +1602,7 @@ class PandasDataManager(object):
             BlockPartitions containing the result of mapping func over axis on indices.
         """
         return self.data.apply_func_to_select_indices_along_full_axis(axis, func, indices, keep_remaining)
-        
+
 
     def quantile_for_list_of_values(self, **kwargs):
         """Returns Manager containing quantiles along an axis for numeric columns.
